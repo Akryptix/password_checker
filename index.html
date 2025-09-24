@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Checker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+
+</head>
+
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+    
+    <div class="bg-white p-8 md:p-12 rounded-2xl shadow-2xl w-full max-w-xl text-center">
+        
+        <h1 class="text-3xl md:text-4xl font-bold mb-4 text-blue-800">Password Checker</h1>
+        <p class="text-gray-500 mb-8">Enter your password to check its strength.</p>
+
+        <div class="relative mb-6">
+            <input type="password" id="passwordInput" placeholder="Enter your password here" class="w-full px-5 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300 text-gray-900 shadow-sm text-lg">
+        </div>
+
+        <div class="relative h-2 rounded-full overflow-hidden mb-4 bg-gray-200">
+            <div id="strengthBar" class="relative h-2 rounded-full overflow-hidden mb-4 bg-gray-200" style="width: 0%;"></div>
+        </div>
+
+        <div id="feedback" class="text-sm font-medium text-gray-600 min-h-[2rem]">Enter Password</div>
+
+        <div id="uppercaseTag" class="text-sm font-medium min-h-[1rem] text-gray-300">Uppercase A-Z</div>
+        <div id="lowercaseTag" class="text-sm font-medium min-h-[1rem] text-gray-300">Lowercase a-z</div>
+        <div id="digitTag" class="text-sm font-medium min-h-[1rem] text-gray-300">Digits 0-9</div>
+        <div id="symbolTag" class="text-sm font-medium min-h-[1rem] text-gray-300">Symbols !-*</div>
+
+        <div id="scoreDisplay" class="text-2xl font-bold mt-4 mb-4 text-gray-800">
+            Score: <span id="scoreValue">0</span>/100
+        </div>
+
+        <div class="mb-6">
+            <button id="reloadButton" class="w-full bg-indigo-500 text-white py-2 rounded-xl font-bold text-lg shadow-sm hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-300" onclick="location.reload()">Reload</button>
+        </div>
+
+
+    </div>
+
+
+    <script>
+        const passwordInput = document.getElementById("passwordInput");
+const strengthBar = document.getElementById("strengthBar");
+const feedback = document.getElementById("feedback");
+const scoreDisplay = document.getElementById("scoreDisplay");
+const uppercaseTag = document.getElementById("uppercaseTag");
+const lowercaseTag = document.getElementById("lowercaseTag");
+const digitTag = document.getElementById("digitTag");
+const symbolTag = document.getElementById("symbolTag");
+
+
+let score = 0;
+
+function check() {
+
+    score = 0;
+
+    const password = passwordInput.value;
+
+    if (password.length >= 12){
+        score += 25;
+    }
+    else if(password.length >= 8){
+        score += 15;
+    }
+
+    let typeCount = 0;
+    let message = "";
+
+    const Uppercase = /[A-Z]/.test(password);
+    const Lowercase = /[a-z]/.test(password);
+    const Digit = /[0-9]/.test(password);
+    const Symbol = /[^a-zA-Z0-9]/.test(password);
+
+    if(Uppercase) {
+        typeCount++;
+        uppercaseTag.className = `text-sm font-medium min-h-[1rem] text-green-500`;
+
+    }
+    else{
+        uppercaseTag.className = `text-sm font-medium min-h-[1rem] text-red-500`;
+    }
+
+    if(Lowercase) {
+        typeCount++;
+        lowercaseTag.className = `text-sm font-medium min-h-[1rem] text-green-500`;
+
+    }
+    else{
+        lowercaseTag.className = `text-sm font-medium min-h-[1rem] text-red-500`;
+    }
+
+    if(Digit) {
+        typeCount++;
+        digitTag.className = `text-sm font-medium min-h-[1rem] text-green-500`;
+
+    }
+    else{
+        digitTag.className = `text-sm font-medium min-h-[1rem] text-red-500`;
+
+    }
+    if(Symbol) {
+        typeCount++;
+        symbolTag.className = `text-sm font-medium min-h-[1rem] text-green-500`;
+
+    }
+    else{
+        symbolTag.className = `text-sm font-medium min-h-[1rem] text-red-500`;
+
+    }
+    
+
+    
+    if(typeCount >= 4){
+        score += 55;
+    }
+    else if(typeCount === 3){
+        score += 45;
+    }
+    else if(typeCount === 2){
+        score += 35;
+    }
+    else if(typeCount === 1){
+        score += 25;
+    }
+   
+
+
+
+
+    scoreDisplay.innerHTML = `<span>${score}</span>/100`;
+
+    if(score >= 80){
+        strengthBar.style.width = `${score}%`;
+        strengthBar.className = `relative h-2 rounded-full overflow-hidden mb-4 bg-green-500`;
+        feedback.innerHTML = `<div id="feedback" class="text-sm font-medium text-gray-600 min-h-[2rem] text-green-500">Very Strong.</div>`
+    }
+    else if(score >= 60){
+        strengthBar.style.width = `${score}%`;
+        strengthBar.className = `relative h-2 rounded-full overflow-hidden mb-4 bg-blue-500`;
+        feedback.innerHTML = `<div id="feedback" class="text-sm font-medium text-gray-600 min-h-[2rem] text-blue-500">Strong.</div>`
+    }
+    else if(score >= 45){
+        strengthBar.style.width = `${score}%`;
+        strengthBar.className = `relative h-2 rounded-full overflow-hidden mb-4 bg-yellow-500`;
+        feedback.innerHTML = `<div id="feedback" class="text-sm font-medium text-gray-600 min-h-[2rem] text-yellow-500">Medium.</div>`
+    }
+    else if(score >= 30){
+        strengthBar.style.width = `${score}%`;
+        strengthBar.className = `relative h-2 rounded-full overflow-hidden mb-4 bg-orange-500`;
+        feedback.innerHTML = `<div id="feedback" class="text-sm font-medium text-gray-600 min-h-[2rem] text-orange-500">Weak.</div>`
+    }
+    else {
+        strengthBar.style.width = `${score}%`;
+        strengthBar.className = `relative h-2 rounded-full overflow-hidden mb-4 bg-red-500`;
+        feedback.innerHTML = `<div id="feedback" class="text-sm font-medium text-gray-600 min-h-[2rem] text-red-500">Very Weak.</div>`
+    }
+}
+
+passwordInput.addEventListener('input', check);
+    </script>
+
+
+</body>
+
+</html>
